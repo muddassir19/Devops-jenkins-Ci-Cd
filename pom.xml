@@ -36,14 +36,10 @@
 		    <artifactId>poi-ooxml</artifactId>
 		    <version>5.2.0</version>
 		</dependency>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>3.3</version>
-			</plugin>
-		</plugins>
-
+		<plugin>
+			<artifactId>maven-war-plugin</artifactId>
+			<version>3.3.2</version>
+		</plugin>
 	</dependencies>
 	<properties>
    		<maven.compiler.source>7</maven.compiler.source>

@@ -8,6 +8,7 @@ pipeline{
                     git branch: 'prod', credentialsId: 'github-token', 
                     url: 'https://github.com/muddassir19/Devops-jenkins-Ci-Cd.git'
             }
+            /*
             post{
                 always{
                     echo "========always========"
@@ -18,7 +19,7 @@ pipeline{
                 failure{
                     echo "========A execution failed========"
                 }
-            }
+            } */
         }
         stage("maven build"){
             steps{

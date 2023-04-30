@@ -11,6 +11,14 @@
 	<dependencies>
 
 		<dependency>
+			<groupId>org.codeartisans.asadmin-maven-plugin</groupId>
+			<artifactId>multi-example-web</artifactId>
+			<version>0.6</version>
+			<type>war</type>
+		</dependency>
+
+
+		<dependency>
 			<groupId>com.intersult</groupId>
 			<artifactId>war-maven-plugin</artifactId>
 			<version>1.2</version>

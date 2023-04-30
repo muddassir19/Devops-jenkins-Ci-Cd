@@ -9,23 +9,6 @@
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
-
-		<dependency>
-			<groupId>org.codeartisans.asadmin-maven-plugin</groupId>
-			<artifactId>multi-example-web</artifactId>
-			<version>0.6</version>
-			<type>war</type>
-		</dependency>
-
-
-		<dependency>
-			<groupId>com.intersult</groupId>
-			<artifactId>war-maven-plugin</artifactId>
-			<version>1.2</version>
-			<type>maven-plugin</type>
-		</dependency>
-
-
 		<dependency>
   			<groupId>org.apache.maven.plugins</groupId>
   			<artifactId>maven-war-plugin</artifactId>
@@ -65,12 +48,4 @@
    		<maven.compiler.source>7</maven.compiler.source>
    		<maven.compiler.target>1.7</maven.compiler.target>
  	</properties>
-	
-		<plugin>
-    		<groupId>org.apache.maven.plugins</groupId>
-    		<artifactId>maven-war-plugin</artifactId>
-   			 <version>3.3.1</version>
-		</plugin>
-
-
 </project>

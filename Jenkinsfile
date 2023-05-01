@@ -3,6 +3,7 @@ pipeline{
         label "master"
     }
     stages{
+        /*
         stage("Checkout code"){
             steps{
                     git branch: 'prod', credentialsId: 'github-token', 
@@ -20,7 +21,7 @@ pipeline{
                     echo "========A execution failed========"
                 }
             } 
-        }
+        } */
         stage("maven build"){
             steps{
                 sh 'mvn clean package'

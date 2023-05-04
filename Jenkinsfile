@@ -27,11 +27,18 @@ pipeline{
                 sh 'mvn clean install -DskipTests'
             }
         }
-        stage("SonarQube analysis"){
+        stage("SonarQube Quality Gates status"){
             steps{
                 withSonarQubeEnv('sonar7.9') {
                     sh 'mvn sonar:sonar'
                 }
+                timeout(time: 1, unit: 'HOURS') {
+                        script{
+                          def qg = waitForQualityGate()
+                          if (qg.status != 'OK') {
+                              error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                            }
+                        }
             }
         }
     }

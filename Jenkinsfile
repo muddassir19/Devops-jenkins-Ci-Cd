@@ -27,6 +27,13 @@ pipeline{
                 sh 'mvn clean install -DskipTests'
             }
         }
+        stage("SonarQube analysis"){
+            steps{
+                withSonarQubeEnv('sonar-server') {
+                    sh 'mvn sonar:sonar'
+                }
+            }
+        }
     }
     post{
         always{

@@ -32,7 +32,7 @@ pipeline{
     */
     stage('Docker build'){
         steps{
-            sh "docker build -t muddassir19/Devapp:${DOCKER_TAG} ."
+            sh "docker build . -t muddassir19/Devapp:${DOCKER_TAG}"
         }
     }
    } 

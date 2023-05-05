@@ -32,7 +32,7 @@ pipeline{
     */
     stage('Docker build'){
         steps{
-            sh "docker build . -t muddassir19/Devapp:$BUILD_ID"
+            sh "docker build -t muddassir19/devapp:$BUILD_ID ."
         }
     }
    } 

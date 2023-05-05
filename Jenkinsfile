@@ -1,5 +1,9 @@
 pipeline{
    agent any
+   environment {
+        DOCKER_TAG = "getversion()"
+    }
+
 
    stages{
     stage('cleanup workspace'){
@@ -21,7 +25,19 @@ pipeline{
         steps{
             sh 'mvn clean package'
         }
-        
+    }
+    /*Docker taging version should not be static,should be dynamic.
+    create a function give short commit-id ,we can use taging for docker image
+    git command: git rev-parse --short HEAD (command returns latest commit-id in short form)
+    */
+    stage('Docker build'){
+        steps{
+            sh "docker build -t muddassir19/Devapp:${DOCKER_TAG} ."
+        }
     }
    } 
+}
+def getversion(){
+    def commitHash = sh returnStdout: true, script: 'git rev-parse --short HEAD'
+    return commitHash
 }

@@ -1,0 +1,29 @@
+---
+- hosts: dev-server
+  become: true
+  grather_facts: false
+  tasks:
+    - name: Install python pip
+      yum:
+        name: python-pip
+        state: present
+    - name: Install docker
+      yum:
+        name: docker
+        state: present 
+    - name: start docker
+      service:
+        name: docker
+        state: started
+        enabled: yes 
+    - name: Install docker-py pyhton module 
+      pip:
+        name: docker-py
+        state: present
+    - name: start the container 
+      docker_container:
+        name: devapp
+        image: "muddassir19/devapp:{{BUILD_IDS}}"
+        state: started
+        published_ports:
+          - 8080:8080

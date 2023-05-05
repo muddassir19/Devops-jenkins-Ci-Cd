@@ -2,6 +2,8 @@ pipeline{
    agent any
    environment {
         DOCKER_TAG = "getversion()"
+        BUILD_IDS = "$BUILD_ID"
+        
     }
 
 
@@ -32,7 +34,7 @@ pipeline{
     */
     stage('Docker build'){
         steps{
-            sh "docker build -t muddassir19/devapp:$BUILD_ID ."
+            sh "docker build -t muddassir19/devapp:${BUILD_IDS} ."
         }
     }
     stage('DockerHub push'){
@@ -41,6 +43,14 @@ pipeline{
             sh "docker login -u muddassir19 -p ${dockerHubPwd}"
         }
             sh "docker push  muddassir19/devapp:$BUILD_ID"
+        }
+    }
+    stage('Docker Deploy'){
+        steps{
+            ansiblePlaybook credentialsId: 'dev-server', disableHostKeyChecking: true, 
+            extras: "-e BUILD_IDS=${BUILD_IDS}", 
+            installation: 'ansible', inventory: 'hosts', 
+            playbook: 'deploy-docker.yml'
         }
     }
    } 

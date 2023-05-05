@@ -35,6 +35,14 @@ pipeline{
             sh "docker build -t muddassir19/devapp:$BUILD_ID ."
         }
     }
+    stage('DockerHub push'){
+        steps{
+            withCredentials([string(credentialsId: 'docker-hub', variable: 'dockerHubPwd')]) {
+            sh "docker login -u muddassir19 -p ${dockerHubPwd}"
+        }
+            sh "docker push  muddassir19/devapp:$BUILD_ID"
+        }
+    }
    } 
 }
 def getVersion(){

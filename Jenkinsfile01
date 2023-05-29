@@ -1,0 +1,166 @@
+pipeline {
+    agent any
+    /*
+    tools {
+        maven 'maven3'
+    }*/
+    environment {
+        //DOCKER_TAG = "getVersion()"
+        IMAGE_NAME = "muddassir19/javaapp"
+    }
+
+    stages{
+        stage('git checkout'){
+            steps{
+                git branch: 'prod', url: 'https://github.com/muddassir19/Devops-jenkins-Ci-Cd.git'
+            }
+        }
+        
+        stage('maven Build'){
+            steps{
+             sh   'mvn clean package'
+            }
+        }
+        /*
+        stage('Test'){
+            when {
+                changeset "Jenkinsfile"
+            }
+            steps{
+                sh 'mvn test'
+            }
+            post{
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
+        }
+        
+        stage('continue') {
+            input {
+                message "Should we continue?"
+                ok "Yes we should"
+            }
+            steps {
+                echo "deploy to prod"
+            }
+        }
+        
+        stage('Docker Build'){
+            steps{
+                //sh "docker build . -t muddassir19/myapp:${DOCKER_TAG} "
+                script{
+                    sh "docker build  -t muddassir19/myapp:$BUILD_NUMBER ."
+                    
+                }
+            }
+        }*/
+        //Build Docker image 
+        stage('docker Build') {
+            steps {
+                // Build the Docker image
+                script {
+                    //def imageName = "muddassir19/myapp"
+                    def imageTag = "${env.BUILD_NUMBER}" // Use build number for dynamic tagging
+
+                    docker.build("${IMAGE_NAME}:${imageTag}", "-f Dockerfile .") // Build the image with the specified tag
+                }
+            }
+        }
+        stage('Docker publish'){
+            steps{
+                script {
+                    def imageTag = "${env.BUILD_NUMBER}" // Use the same build number as before
+                    
+                    // Tag the image with 'latest' and publish it to a registry
+                    sh "docker tag ${IMAGE_NAME}:${imageTag} ${IMAGE_NAME}:latest"
+                    withCredentials([string(credentialsId: 'docker-passwd', variable: 'DOCKER_CREDENTIALS')]) {
+                        sh "docker login -u muddassir19 -p ${DOCKER_CREDENTIALS}"
+                    }
+                    sh "docker push ${IMAGE_NAME}:${imageTag}"
+                    sh "docker push ${IMAGE_NAME}:latest"
+                    // Delete the local Docker Images
+                    sh "docker rmi ${IMAGE_NAME}:${imageTag}"
+                    sh " docker rmi ${IMAGE_NAME}:latest"
+                }
+            }
+        }
+        /*
+        stage('Docker build'){
+            steps{
+                script{
+                    //def imageName ="muddassir19/java-app"
+                    def imageTag = "${env.BUILD_NUMBER}"
+                    
+                    sh "docker build -t ${IMAGE_NAME}:${imageTag} -f Dockerfile ."
+                }
+            }
+        }
+        stage('Docker publish'){
+            steps{
+                script{
+                    def imageTag = "${env.BUILD_NUMBER}"
+                    //Tag the image with 'latest' and publish it to a registry
+                    sh "docker tag ${IMAGE_NAME}:${imageTag} ${IMAGE_NAME}:latest"
+                    // Push the images to the registry using withCredentials
+                    withCredentials([usernamePassword(credentialsId: 'registry-credentials', passwordVariable: 'Docker-passwd', usernameVariable: 'Docker-username')]) {
+                        sh "docker login -u ${Docker-username} -p ${Docker-passwd} ${DOCKER_REGISTERY}"
+                        sh "docker push ${IMAGE_NAME}:${imageTag}"
+                        sh "docker psuh ${IMAGE_NAME}:latest"
+                        sh "docker logout ${DOCKER_REGISTERY}"
+                        
+                        // Delete the local Docker images
+                        sh "docker rmi ${IMAGE_NAME}:${imageTag}"
+                        sh "docker rmi ${IMAGE_NAME}:latest"
+                    }
+                }
+            }
+        }*/
+        /*
+        //slack notifaction using try, catch block in a stage
+        stage('slack notify try,catch'){
+            steps{
+                script{
+                    try{
+                        echo "hello slack"
+                        //slackSend (channel: "#java-project", attachments: attachments)
+                        slackSend channel: slackResponse.channelId, message: "Build : ${env.JOB_NAME} completed Successfully ${env.BUILD_URL}"
+                    }
+                    catch(Exception error){
+                        sh 'echo "job failed"'
+                        currentBuild.result = 'FAILURE'
+                        slackSend(channel: slackResponse.channelId, message: "Builed Failed with error: ${error} Troubleshoot with console log ${env.BUILD_URL}", timestamp: slackResponse.ts)
+                    }
+                }
+            }
+        }*/
+    }    
+    post{
+        always{
+            echo 'I always say sucess'
+            //slackSend channel: 'java-project', 
+            //message: "Please find status of pipeline, Status- ${currentBuild.currentResult} Job-name- ${env.JOB_NAME} Build-number- ${env.BUILD_NUMBER} URL- ${env.BUILD_URL}"
+        }
+        failure{
+            echo 'failure'
+        }
+        success{
+            echo 'success'
+        }
+    }
+}
+/*
+def attachments = [
+    [
+        text: 'This is Slack Integration',
+        fallback: 'Hey, seems to mad at you.',
+        color: '#ff0000'
+    ]
+]
+def slackResponse = slackSend (channel: 'java-project', message: "Please find status of pipeline")
+*/
+/*
+def getVersion(){
+    def commitHash = sh returnStdout: true, script: 'git rev-parse --short HEAD'
+    return commitHash
+} */
